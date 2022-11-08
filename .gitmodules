@@ -1,0 +1,6 @@
+[submodule "src/ver/touches-controller"]
+	path = src/ver/touches-controller
+	url = https://github.com/admenmod/touches-controller
+[submodule "src/ver/ver"]
+	path = src/ver/ver
+	url = https://github.com/admenmod/ver
