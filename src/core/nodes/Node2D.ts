@@ -1,11 +1,11 @@
-import { Child, Vector2 } from "../../ver/ver/ver";
-import { Node } from "./Node";
+import { Vector2 } from "@/core/Vector2";
+import { Node } from "@/core/nodes/Node";
 
 
 export class Node2D extends Node {
 	public readonly position: Vector2;
 
-	constructor(name: string) {
+	constructor(name?: string) {
 		super(name);
 
 		this.position = new Vector2();

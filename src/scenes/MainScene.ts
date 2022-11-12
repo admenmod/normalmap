@@ -1,17 +1,24 @@
-import { Node } from '../classes/nodes/Node';
-import { IScene } from '../classes/Scene';
+import { Vector2 } from '@/ver/ver/ver';
+import { Node } from '@/core/nodes/Node';
+import { Node2D } from '@/core/nodes/Node2D';
 
 import {
 	touches, layers, screenSize,
 	globalGridMap, motionByTouch
-} from '../modules/global_ns';
+} from '@/modules/global_ns';
 
 
-export class MainScene extends Node implements IScene {
-	public readonly name: string = 'MainScene';
+export class MainScene extends Node {
+	private static SUBNODES: typeof Node[] = [
+		Node2D
+	];
 
-	constructor(name: string) {
+
+	constructor(name?: string) {
 		super(name);
+
+		// this.addChild(new Node2D(), 'Node2D');
+		// this.getChild('Node2D');
 
 		// const systemInfoDrawObject = G.systemInfoDrawObject = {
 		// 	textFPS: '',
@@ -60,13 +67,13 @@ export class MainScene extends Node implements IScene {
 	}
 
 	//========== Init ==========//
-	protected _oninit(): void {
+	protected _init(): void {
 		console.log(`Scene: ${this.name}\nScreen size: ${screenSize.x}, ${screenSize.y}`);
 	}
 
 
 	//========== Update ==========//
-	protected _onupdate(dt: number): void {
+	protected _process(dt: number): void {
 		motionByTouch.update(dt, touches, layers.main.camera);
 
 		layers.main.ctx.clearRect(0, 0, screenSize.x, screenSize.y);
@@ -79,7 +86,7 @@ export class MainScene extends Node implements IScene {
 	}
 
 	//========== Exit ==========//
-	protected _onexit() {
+	protected _exit() {
 		console.log(this.name, 'exit');
 	}
 }

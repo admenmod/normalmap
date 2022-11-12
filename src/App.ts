@@ -9,10 +9,10 @@ export class App {
 		G.gameLoop = gameLoop;
 
 
-		const mainScene = new MainScene('main');
+		const mainScene = new MainScene('MainScene');
 
 		gameLoop.on('update', (dt: number) => {
-			mainScene.update(dt);
+			mainScene.process(dt);
 			touches.nullify();
 		});
 
