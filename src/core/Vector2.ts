@@ -1,7 +1,7 @@
 export type Vector2_t = Vector2 | number[] | { 0: number, 1: number };
 
 
-const u = (a: any): boolean => a !== null && a !== undefined;
+const isVector2_t = (v: any): v is Vector2_t => v[0] !== null && v[0] !== undefined && v[1] !== null && v[1] !== undefined;
 
 
 export class Vector2 {
@@ -13,7 +13,7 @@ export class Vector2 {
 	constructor();
 	constructor(v: Vector2_t);
 	constructor(x: number, y: number);
-	constructor(...args: any) {
+	constructor(...args: any[]) {
 		for(let i = 0; i < this.length; ++i) (this as any)[i] = args[i] || 0;
 	}
 
@@ -27,7 +27,7 @@ export class Vector2 {
 	public set(): this;
 	public set(v: Vector2_t): this;
 	public set(x: number, y?: number): this;
-	public set(...args: any): this {
+	public set(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] = args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] = args[0]; }
@@ -37,7 +37,7 @@ export class Vector2 {
 
 	public add(v: Vector2_t): this;
 	public add(x: number, y?: number): this;
-	public add(...args: any): this {
+	public add(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] += args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] += args[0]; }
@@ -47,7 +47,7 @@ export class Vector2 {
 
 	public sub(v: Vector2_t): this;
 	public sub(x: number, y?: number): this;
-	public sub(...args: any): this {
+	public sub(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] -= args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] -= args[0]; }
@@ -57,7 +57,7 @@ export class Vector2 {
 
 	public inc(v: Vector2_t): this;
 	public inc(x: number, y?: number): this;
-	public inc(...args: any): this {
+	public inc(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] *= args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] *= args[0]; }
@@ -67,7 +67,7 @@ export class Vector2 {
 
 	public div(v: Vector2_t): this;
 	public div(x: number, y?: number): this;
-	public div(...args: any): this {
+	public div(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] /= args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] /= args[0]; }
@@ -77,7 +77,7 @@ export class Vector2 {
 
 	public pow(v: Vector2_t): this;
 	public pow(x: number, y?: number): this;
-	public pow(...args: any): this {
+	public pow(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] **= args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] **= args[0]; }
@@ -87,7 +87,7 @@ export class Vector2 {
 
 	public mod(v: Vector2_t): this;
 	public mod(x: number, y?: number): this;
-	public mod(...args: any): this {
+	public mod(...args: any[]): this {
 		if(args.length === 1) {
 			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] %= args[0][i]; }
 			else { for(let i = 0; i < this.length; ++i) (this as any)[i] %= args[0]; }
@@ -172,6 +172,12 @@ export class Vector2 {
 
 
 	public static readonly ZERO: Vector2 = Object.freeze(new Vector2());
+	public static readonly ONE: Vector2 = Object.freeze(new Vector2(1, 1));
+
+	public static readonly LEFT: Vector2 = Object.freeze(new Vector2(-1, 0));
+	public static readonly RIGHT: Vector2 = Object.freeze(new Vector2(1, 0));
+	public static readonly UP: Vector2 = Object.freeze(new Vector2(0, -1));
+	public static readonly DOWN: Vector2 = Object.freeze(new Vector2(0, 1));
 
 
 	public toString(): string { return `Vector2(${this[0]}, ${this[1]})`; }
@@ -183,4 +189,4 @@ export class Vector2 {
 export const vec2: {
 	(v: Vector2_t): Vector2;
 	(x: number, y: number): Vector2;
-} = (...args: any): Vector2 => new Vector2(args);
+} = (...args: any[]): Vector2 => new Vector2(args);

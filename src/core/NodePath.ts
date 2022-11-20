@@ -118,7 +118,7 @@ export class Path extends Array {
 };
 
 
-export class NodePath extends Array {
+export class NodePath extends String {
 	private _src: string;
 
 	public static readonly dir_expr: RegExp = /\//g;
@@ -137,7 +137,7 @@ export class NodePath extends Array {
 	public get input() { return this._input; }
 
 	constructor(src: string) {
-		super();
+		super(src);
 
 		this._input = src;
 
@@ -159,7 +159,7 @@ export class NodePath extends Array {
 
 	public static from(src: string | NodePath): NodePath {
 		if(typeof src === 'string') return new NodePath(src);
-		if(src instanceof NodePath) return src as NodePath;
+		if(src instanceof NodePath) return src;
 
 		throw new Error('src is not string or NodePath\n'+src);
 	}

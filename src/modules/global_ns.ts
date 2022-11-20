@@ -35,5 +35,5 @@ export const globalGridMap = new GridMap({ size: screenSize, coordinates: true }
 canvas.addEventListener('dblclick', () => canvas.requestFullscreen());
 
 
-const G: { [id: string]: any } = { canvas, touches, layers, screenSize, motionByTouch, globalGridMap };
+const G: object = { canvas, touches, layers, screenSize, motionByTouch, globalGridMap };
 export default G;
