@@ -1,6 +1,7 @@
 import { Vector2 } from "@/core/Vector2";
 import { Node } from "@/core/nodes/Node";
-import { CanvasItem } from "./CanvasItem";
+import { CanvasItem } from "@/core/nodes/CanvasItem";
+import { NodePath } from "@/core/NodePath";
 
 
 export class Node2D extends CanvasItem {
@@ -53,7 +54,9 @@ export class Node2D extends CanvasItem {
 		const l = Math.min(nl, arr.length, Node.MAX_NESTING);
 		const acc = this.scale.buf();
 
-		for(let i = 0; i < l; i++) acc.inc(arr[i].scale);
+		for(let i = 0; i < l; i++) {
+			if(!arr[i].scale.isSame(Vector2.ZERO)) acc.inc(arr[i].scale);
+		}
 
 		return acc;
 	}
@@ -62,7 +65,9 @@ export class Node2D extends CanvasItem {
 		const l = Math.min(nl, arr.length, Node.MAX_NESTING);
 		let acc = this.rotation;
 
-		for(let i = 0; i < l; i++) acc += arr[i].rotation;
+		for(let i = 0; i < l; i++) {
+			if(arr[i].rotation !== 0) acc += arr[i].rotation;
+		}
 
 		return acc;
 	}
@@ -86,6 +91,10 @@ export class Node2D extends CanvasItem {
 	public render(ctx: CanvasRenderingContext2D): void {
 		this._draw(ctx, this.globalPosition, this.globalScale, this.globalRotation);
 		super.render(ctx);
-	}
 
+		let a: String = this.getPath();
+		let b: NodePath = new NodePath('i');
+
+		b = a;
+	}
 }

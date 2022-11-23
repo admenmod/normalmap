@@ -1,3 +1,4 @@
+/*
 export class Path extends Array {
 	private _src!: string;
 	public input!: string;
@@ -116,22 +117,22 @@ export class Path extends Array {
 	
 	static get [Symbol.species]() { return Array; }
 };
-
+*/
 
 export class NodePath extends String {
 	private _src: string;
 
 	public static readonly dir_expr: RegExp = /\//g;
 
-	private _isAbsolute: boolean;
-	private _isRelative: boolean;
-	private _isPassive: boolean;
-	private _isDirectory: boolean;
+	// private _isAbsolute: boolean;
+	// private _isRelative: boolean;
+	// private _isPassive: boolean;
+	// private _isDirectory: boolean;
 
-	public get isAbsolute(): boolean { return this._isAbsolute; }
-	public get isRelative(): boolean { return this._isRelative; }
-	public get isPassive(): boolean { return this._isPassive; }
-	public get isDirectory(): boolean { return this._isDirectory; }
+	// public get isAbsolute(): boolean { return this._isAbsolute; }
+	// public get isRelative(): boolean { return this._isRelative; }
+	// public get isPassive(): boolean { return this._isPassive; }
+	// public get isDirectory(): boolean { return this._isDirectory; }
 
 	private _input: string; 
 	public get input() { return this._input; }
@@ -144,6 +145,8 @@ export class NodePath extends String {
 		const arr: string[] = src.split(NodePath.dir_expr).filter(Boolean);
 
 		this._src = src;
+
+		// return (this as (NodePath & string));
 	}
 
 	toString() { return this._src; }

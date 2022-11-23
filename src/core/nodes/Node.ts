@@ -1,50 +1,16 @@
-import { Event } from "@/core/Event";
+import { Event, EventTarget } from "@/core/Event";
 import { NodePath } from "@/core/NodePath";
-import { Node2D } from "./Node2D";
 import { getInstanceOf, isInstanceOf } from '@/core/types';
 
 
-class NodeEvent<
-	Args extends any[] = any[],
-	Class extends typeof Node = typeof Node,
-> extends Event<getInstanceOf<Class>, Args> {
-	public readonly name: keyof getInstanceOf<Class>;
-	public readonly _class: Class;
+export class Node extends EventTarget {
+	public '@init' = new Event<this, []>(this);
+	public '@exit' = new Event<this, []>(this);
+	public '@load' = new Event<this, []>(this);
+	public '@ready' = new Event<this, []>(this);
 
-	constructor(name: keyof getInstanceOf<Class>, _class: Class, _this: getInstanceOf<Class>) {
-		super(_this);
-
-		this.name = name;
-		this._class = _class;
-	}
-
-	public emit(...args: Args): this {
-		super.emit(...args);
-
-		const chein = this._this.getChainParents(this._class);
-		for(let i = 0; i < chein.length; ++i) {
-			(chein[i][this.name] as NodeEvent<Args, Class>).emit(...args);
-		}
-
-		return this;
-	}
-}
-
-
-export class Node {
-	public static InitEvent = class InitEvent extends NodeEvent<[], typeof Node> {};
-	public static ExitEvent = class ExitEvent extends NodeEvent<[], typeof Node> {};
-	public static LoadEvent = NodeEvent<Node, []>;
-	public static ReadyEvent = NodeEvent<Node, []>;
-	public static ProcessEvent = NodeEvent<Node, [number]>;
-	public static RenderEvent = NodeEvent<Node, [CanvasRenderingContext2D]>;
-
-	public init_event = new Node.InitEvent(this, 'init_event');
-	public exit_event = new Node.ExitEvent(this, 'exit_event');
-	public load_event = new Node.LoadEvent(this, 'load_event');
-	public ready_event = new Node.ReadyEvent(this, 'ready_event');
-	public process_event = new Node.ProcessEvent(this, 'process_event');
-	public render_event = new Node.RenderEvent(this, 'render_event');
+	public '@process' = new Event<this, [number]>(this);
+	public '@render' = new Event<this, [CanvasRenderingContext2D]>(this);
 
 
 	public static readonly MAX_NESTING: number = 10000;
@@ -66,6 +32,7 @@ export class Node {
 
 
 	constructor(name?: string) {
+		super();
 		if(name) this.name = name;
 	}
 
@@ -102,7 +69,7 @@ export class Node {
 		this._init();
 		this._isInited = true;
 
-		this.init_event.emit();
+		(this as Node).emit('init');
 	}
 
 	public exit(): void {
@@ -111,7 +78,7 @@ export class Node {
 		this._exit();
 		this._isExited = true;
 
-		this.exit_event.emit();
+		(this as Node).emit('exit');
 	}
 
 	public async load(): Promise<any> {
@@ -122,7 +89,7 @@ export class Node {
 		await promise;
 		this._isLoaded = true;
 
-		this.load_event.emit();
+		(this as Node).emit('load');
 
 		return promise;
 	}
@@ -133,20 +100,23 @@ export class Node {
 		this._ready();
 		this._isReady = true;
 
-		this.ready_event.emit();
+		(this as Node).emit('ready');
 	}
 
 	public process(dt: number): void {
 		if(!this._isInited || !this._isReady) return;
 
 		this._process(dt);
-		this.process_event.emit(dt);
+
+
+		(this as Node).emit('process', dt);
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		this._render(ctx);
-		this.render_event.emit(ctx);
+		(this as Node).emit('render', ctx);
 	}
+
 
 
 	public isInsideTree(): boolean { return Boolean(this._parent_node); }
@@ -158,25 +128,18 @@ export class Node {
 		let p: Node | null = this;
 
 		for(let i = 0; (p = p.getParent()) && i < Node.MAX_NESTING; ++i) {
-			if(isInstanceOf(Class, p)) arr.push(p);
+			if(isInstanceOf(p, Class)) arr.push(p);
 		}
 
 		return arr;
 	}
 
 
-	// public getNode(path: string): Node {
-	// 	const nodepath = NodePath.from(path);
- //
-	// 	for(const id in this._child_nodes) {
-	// 		if(id === nodepath.getName()) return true;
-	// 	}
- //
-	// 	return false;
-	// }
-
-
 	public hasChild(name: string): boolean {
+		for(let i = 0; i < this._child_nodes.length; i++) {
+			if(this._child_nodes[i].name === name) return true;
+		}
+
 		return false;
 	}
 
@@ -188,8 +151,19 @@ export class Node {
 		return false;
 	}
 
+	public getCountChildren(): number { return this._child_nodes.length; }
 	public getChild<T extends Node = Node>(index: number): T {
 		return this._child_nodes[index] as T;
+	}
+
+	public getNode(path: string): Node | null {
+		const nodepath = NodePath.from(path);
+
+		for(let i = 0; i < this._child_nodes.length; i++) {
+			if(this._child_nodes[i].name === nodepath.getName(0)) return this._child_nodes[i];
+		}
+
+		return null;
 	}
 
 	public addChild(node: Node, name: string = node.name): this {
@@ -203,21 +177,34 @@ export class Node {
 		return this;
 	}
 
-
 	public removeChild(node: Node): this {
+		let l = this._child_nodes.indexOf(node);
+
+		if(~l) console.error('this node is not a child');
+		this._child_nodes.splice(l, 1);
+
 		return this;
 	}
 
 
-	public getPath(): string {
+	public getPath(): NodePath {
 		let path = '';
 		let p: Node | null = this;
 
 		for(let i = 0; p && i < Node.MAX_NESTING; ++i) {
-			path += p.name;
+			path += '/'+p.name;
 			p = p.getParent();
 		}
 
-		return path;
+		return new NodePath(path);
 	}
 }
+
+
+let aaa = new Node();
+
+aaa.emit('process', 8);
+
+aaa.on('process', function(dt) {
+	dt;
+});
