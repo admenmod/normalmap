@@ -1,11 +1,36 @@
-import { Node2D } from "@/core/nodes/Node2D";
-import { Sprite2D } from "@/core/nodes/Sprite2D";
+import { Node2D } from "../core/nodes/Node2D";
+import { Sprite2D } from "../core/nodes/Sprite2D";
+import { Vector2 } from "../core/Vector2";
 
 
 export class Block extends Node2D {
-	constructor() {
-		super();
+	public readonly size = new Vector2(10, 10);
 
-		this.addChild(new Sprite2D(), 'Sprite2D');
+	constructor(name?: string) {
+		super(name);
+
+		// this.addChild(new Sprite2D(), 'Sprite2D');
+	}
+	
+	protected async _ready() {
+		// await Promise.all([
+		// 	// this.getNode<Sprite2D>('Sprite2D')!.load('../../public/vite.svg')
+		// ]);
+	}
+
+	protected _draw(
+		ctx: CanvasRenderingContext2D,
+		pos: Vector2 = this.globalPosition,
+		scale: Vector2 = this.globalScale,
+		rot: number = this.globalRotation
+	) {
+		super._draw(ctx);
+
+		const size = this.size.buf().inc(scale);
+
+		ctx.save();
+		ctx.fillStyle = '#ff1111';
+		ctx.fillRect(pos.x, pos.y, size.x, size.y);
+		ctx.restore();
 	}
 }

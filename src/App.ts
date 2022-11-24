@@ -1,26 +1,28 @@
-import { GameLoop } from './modules/system_ns';
+import { MainLoop } from './core/MainLoop';
 import { MainScene } from './scenes/MainScene';
-import G, { touches } from './modules/global_ns';
+import G, { layers, touches } from './modules/global_ns';
+import { Viewport } from './core/nodes/Viewport';
 
 
 export class App {
 	public static init(): void {
-		const gameLoop = new GameLoop();
-		G.gameLoop = gameLoop;
+		const mainLoop = new MainLoop();
 
+		const viewport = new Viewport();
+		const mainScene = viewport.addChild(new MainScene());
 
-		const mainScene = new MainScene('MainScene');
+		G.viewport = viewport;
 
-		gameLoop.on('update', (dt: number) => {
-			mainScene.process(dt);
+		mainLoop.on('update', dt => {
+			viewport.render(layers.main.ctx);
+			viewport.process(dt);
 			touches.nullify();
 		});
 
-		gameLoop.start();
+		mainLoop.start();
 
-		mainScene.load().then(() => {
+		mainScene.ready().then(() => {
 			mainScene.init();
-			mainScene.ready();
 		});
 	}
 }

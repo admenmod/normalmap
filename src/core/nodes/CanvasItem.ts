@@ -1,5 +1,5 @@
 import { Node } from '@/core/nodes/Node';
-import {Vector2} from '../Vector2';
+import { Vector2 } from '../Vector2';
 
 
 export class CanvasItem extends Node {

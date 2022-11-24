@@ -1,10 +1,8 @@
-import { Vector2 } from "@/core/Vector2";
-import { Node } from "@/core/nodes/Node";
-import { CanvasItem } from "@/core/nodes/CanvasItem";
-import { NodePath } from "@/core/NodePath";
+import { Vector2 } from "../../core/Vector2";
+import { Node } from "../../core/nodes/Node";
 
 
-export class Node2D extends CanvasItem {
+export class Node2D extends Node {
 	public readonly position = new Vector2();
 	public readonly scale = new Vector2(1, 1);
 
@@ -86,6 +84,14 @@ export class Node2D extends CanvasItem {
 
 		return acc;
 	}
+
+
+	protected _draw(
+		ctx: CanvasRenderingContext2D,
+		pos: Vector2 = this.globalPosition,
+		scale: Vector2 = this.globalScale,
+		rot: number = this.globalRotation
+	) {}
 
 
 	public render(ctx: CanvasRenderingContext2D): void {

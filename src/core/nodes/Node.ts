@@ -1,12 +1,11 @@
-import { Event, EventEmitter } from "@/core/Event";
-import { NodePath } from "@/core/NodePath";
-import { getInstanceOf, isInstanceOf } from '@/core/types';
+import { Event, EventEmitter } from "../../core/Event";
+import { NodePath } from "../../core/NodePath";
+import { getInstanceOf, isInstanceOf } from '../../core/types';
 
 
 export class Node extends EventEmitter {
 	public '@init' = new Event<Node, []>(this);
 	public '@exit' = new Event<Node, []>(this);
-	public '@load' = new Event<Node, []>(this);
 	public '@ready' = new Event<Node, []>(this);
 
 	public '@process' = new Event<Node, [number]>(this);
@@ -28,7 +27,6 @@ export class Node extends EventEmitter {
 	protected _child_nodes: Node[] = [];
 
 
-	private _isLoaded: boolean = false;
 	private _isInited: boolean = false;
 	private _isExited: boolean = false;
 	private _isReady: boolean = false;
@@ -39,14 +37,13 @@ export class Node extends EventEmitter {
 		if(name) this.name = name;
 	}
 
-	public set name(v: string) { this._name = v; }
-	public get name(): string { return this._name; }
+	public set name(v) { this._name = v; }
+	public get name() { return this._name; }
 
-	public get owner(): Node | null { return this._owner; }
-	public set owner(v: Node | null) { this._owner = v; }
+	public get owner() { return this._owner; }
+	public set owner(v) { this._owner = v; }
 
 
-	public get isLoaded(): boolean { return this._isLoaded; }
 	public get isInited(): boolean { return this._isInited; }
 	public get isExited(): boolean { return this._isExited; }
 	public get isReady(): boolean { return this._isReady; }
@@ -59,9 +56,7 @@ export class Node extends EventEmitter {
 	protected _init(): void {}
 	protected _exit(): void {}
 
-	protected async _load(): Promise<void> { return await Promise.resolve(); }
-
-	protected _ready(): void {};
+	protected async _ready(): Promise<void> {};
 	protected _process(dt: number): void {};
 	protected _render(ctx: CanvasRenderingContext2D): void {}
 
@@ -72,6 +67,9 @@ export class Node extends EventEmitter {
 		this._init();
 		this._isInited = true;
 
+		const l = this.getCountChildren();
+		for(let i = 0; i < l; i++) this.getChild(i).init();
+
 		(this as Node).emit('init');
 	}
 
@@ -81,26 +79,24 @@ export class Node extends EventEmitter {
 		this._exit();
 		this._isExited = true;
 
+		const l = this.getCountChildren();
+		for(let i = 0; i < l; i++) this.getChild(i).exit();
+
 		(this as Node).emit('exit');
 	}
 
-	public async load(): Promise<any> {
-		if(this._isLoaded) return Promise.resolve<string>('loaded-2');
+	public async ready(): Promise<void> {
+		if(this._isReady) return;
 
-		const promise = this._load();
+		await this._ready();
+		const proms: Promise<void>[] = [];
 
-		await promise;
-		this._isLoaded = true;
+		const l = this.getCountChildren();
+		for(let i = 0; i < l; i++) proms.push(this.getChild(i).ready());
+		
 
-		(this as Node).emit('load');
+		await Promise.all(proms);
 
-		return promise;
-	}
-
-	public ready(): void {
-		if(!this._isLoaded || this._isReady) return;
-
-		this._ready();
 		this._isReady = true;
 
 		(this as Node).emit('ready');
@@ -111,12 +107,18 @@ export class Node extends EventEmitter {
 
 		this._process(dt);
 
+		const l = this.getCountChildren();
+		for(let i = 0; i < l; i++) this.getChild(i).process(dt);
 
 		(this as Node).emit('process', dt);
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		this._render(ctx);
+
+		const l = this.getCountChildren();
+		for(let i = 0; i < l; i++) this.getChild(i).render(ctx);
+
 		(this as Node).emit('render', ctx);
 	}
 
@@ -159,17 +161,17 @@ export class Node extends EventEmitter {
 		return this._child_nodes[index] as T;
 	}
 
-	public getNode(path: string): Node | null {
+	public getNode<T extends Node>(path: string): T | null {
 		const nodepath = NodePath.from(path);
 
 		for(let i = 0; i < this._child_nodes.length; i++) {
-			if(this._child_nodes[i].name === nodepath.getName(0)) return this._child_nodes[i];
+			if(this._child_nodes[i].name === nodepath.getName(0)) return this._child_nodes[i] as T;
 		}
 
 		return null;
 	}
 
-	public addChild(node: Node, name: string = node.name): this {
+	public addChild<T extends Node>(node: T, name: string = node.name): T {
 		if(this.hasChild(name)) throw new Error(`node with the same name "${name}" already exists`);
 		if(node._parent_node) throw new Error(`this node has already been added to tree along the path "${node.getPath()}"`);
 
@@ -178,12 +180,12 @@ export class Node extends EventEmitter {
 		this._child_nodes.push(node);
 
 		node._enter_tree(this, node.name);
-		node.emit('enter_tree', this, node.name);
+		(node as Node).emit('enter_tree', this, node.name);
 
-		return this;
+		return node;
 	}
 
-	public removeChild(node: Node): this {
+	public removeChild<T extends Node>(node: T): T {
 		let l = this._child_nodes.indexOf(node);
 
 		if(~l) console.error('this node is not a child');
@@ -191,9 +193,9 @@ export class Node extends EventEmitter {
 		node._parent_node = null;
 
 		node._exit_tree(this, node.name);
-		node.emit('exit_tree', this, node.name);
+		(node as Node).emit('exit_tree', this, node.name);
 
-		return this;
+		return node;
 	}
 
 

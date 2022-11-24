@@ -1,12 +1,11 @@
-import { Vector2 } from '@/ver/ver/ver';
-import { Event, EventEmitter } from '@/core/Event';
-import { Node } from '@/core/nodes/Node';
-import { Node2D } from '@/core/nodes/Node2D';
+import { Vector2 } from '../ver/ver/ver';
+import { Node } from '../core/nodes/Node';
+import { Block } from '../modules/Block';
 
 import {
 	touches, layers, screenSize,
 	globalGridMap, motionByTouch
-} from '@/modules/global_ns';
+} from '../modules/global_ns';
 
 
 export class MainScene extends Node {
@@ -18,9 +17,11 @@ export class MainScene extends Node {
 	constructor(name?: string) {
 		super(name);
 
-		this.addChild(new Node2D(), 'Node2D');
-		let node = this.getNode('Node2D');
-		if(node) this.removeChild(node);
+		let block = this.addChild(new Block(), 'Block');
+
+		block.position.set(10, 10);
+		block.size.set(200, 200);
+
 
 		// const systemInfoDrawObject = G.systemInfoDrawObject = {
 		// 	textFPS: '',
@@ -78,13 +79,15 @@ export class MainScene extends Node {
 	protected _process(dt: number): void {
 		motionByTouch.update(dt, touches, layers.main.camera);
 
-		layers.main.ctx.clearRect(0, 0, screenSize.x, screenSize.y);
-
-		globalGridMap.draw(layers.main.ctx, layers.main.camera);
-
-
 		// systemInfoDrawObject.update(dt);
 		// systemInfoDrawObject.draw(layers.main.ctx);
+	}
+
+	protected _render(ctx: CanvasRenderingContext2D) {
+		// layers.main.ctx.clearRect(0, 0, screenSize.x, screenSize.y);
+
+		// globalGridMap.draw(layers.main.ctx, layers.main.camera);
+		this.getNode('Block')!.render(ctx);
 	}
 
 	//========== Exit ==========//

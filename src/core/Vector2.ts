@@ -170,6 +170,20 @@ export class Vector2 {
 		return this;
 	}
 
+	public isDynamicRectIntersect(a: [Vector2_t, Vector2_t, Vector2_t, Vector2_t]) {
+		let d = false;
+		for(let c = a.length-1, n = 0; n < a.length; c = n++) {
+			a[n][1] > this[1] != a[c][1] > this[1]
+			&& this[0] < (a[c][0] - a[n][0]) * (this[1]-a[n][1]) / (a[c][1] - a[n][1]) + a[n][0]
+			&& (d = !d);
+		};
+		return d;
+	}
+
+	public isStaticRectIntersect({ x, y, w, h }: { x: number, y: number, w: number, h: number }): boolean {
+		return this.x > x && this.x < x+w && this.y > y && this.y < y+h;
+	}
+
 
 	public static readonly ZERO: Vector2 = Object.freeze(new Vector2());
 	public static readonly ONE: Vector2 = Object.freeze(new Vector2(1, 1));
@@ -188,5 +202,5 @@ export class Vector2 {
 
 export const vec2: {
 	(v: Vector2_t): Vector2;
-	(x: number, y: number): Vector2;
+	(x?: number, y?: number): Vector2;
 } = (...args: any[]): Vector2 => new Vector2(args);
