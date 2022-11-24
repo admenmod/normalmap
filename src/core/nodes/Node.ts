@@ -1,16 +1,19 @@
-import { Event, EventTarget } from "@/core/Event";
+import { Event, EventEmitter } from "@/core/Event";
 import { NodePath } from "@/core/NodePath";
 import { getInstanceOf, isInstanceOf } from '@/core/types';
 
 
-export class Node extends EventTarget {
-	public '@init' = new Event<this, []>(this);
-	public '@exit' = new Event<this, []>(this);
-	public '@load' = new Event<this, []>(this);
-	public '@ready' = new Event<this, []>(this);
+export class Node extends EventEmitter {
+	public '@init' = new Event<Node, []>(this);
+	public '@exit' = new Event<Node, []>(this);
+	public '@load' = new Event<Node, []>(this);
+	public '@ready' = new Event<Node, []>(this);
 
-	public '@process' = new Event<this, [number]>(this);
-	public '@render' = new Event<this, [CanvasRenderingContext2D]>(this);
+	public '@process' = new Event<Node, [number]>(this);
+	public '@render' = new Event<Node, [CanvasRenderingContext2D]>(this);
+
+	public '@enter_tree' = new Event<Node, [Node, string]>(this);
+	public '@exit_tree' = new Event<Node, [Node, string]>(this);
 
 
 	public static readonly MAX_NESTING: number = 10000;
@@ -49,14 +52,14 @@ export class Node extends EventTarget {
 	public get isReady(): boolean { return this._isReady; }
 
 
-	protected _enter_tree(): void {}
-	protected _exit_tree(): void {}
+	protected _enter_tree(node: Node, name: string): void {}
+	protected _exit_tree(node: Node, name: string): void {}
 
 
 	protected _init(): void {}
 	protected _exit(): void {}
 
-	protected async _load(): Promise<any> { return await Promise.resolve(); }
+	protected async _load(): Promise<void> { return await Promise.resolve(); }
 
 	protected _ready(): void {};
 	protected _process(dt: number): void {};
@@ -168,11 +171,14 @@ export class Node extends EventTarget {
 
 	public addChild(node: Node, name: string = node.name): this {
 		if(this.hasChild(name)) throw new Error(`node with the same name "${name}" already exists`);
-		if(node._parent_node) throw new Error(`this node has already been added to the tree along the path "${node.getPath()}"`);
+		if(node._parent_node) throw new Error(`this node has already been added to tree along the path "${node.getPath()}"`);
 
 		node._parent_node = this;
 		node.name = name;
 		this._child_nodes.push(node);
+
+		node._enter_tree(this, node.name);
+		node.emit('enter_tree', this, node.name);
 
 		return this;
 	}
@@ -182,6 +188,10 @@ export class Node extends EventTarget {
 
 		if(~l) console.error('this node is not a child');
 		this._child_nodes.splice(l, 1);
+		node._parent_node = null;
+
+		node._exit_tree(this, node.name);
+		node.emit('exit_tree', this, node.name);
 
 		return this;
 	}
@@ -199,12 +209,3 @@ export class Node extends EventTarget {
 		return new NodePath(path);
 	}
 }
-
-
-let aaa = new Node();
-
-aaa.emit('process', 8);
-
-aaa.on('process', function(dt) {
-	dt;
-});

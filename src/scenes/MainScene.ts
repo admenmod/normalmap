@@ -1,4 +1,5 @@
 import { Vector2 } from '@/ver/ver/ver';
+import { Event, EventEmitter } from '@/core/Event';
 import { Node } from '@/core/nodes/Node';
 import { Node2D } from '@/core/nodes/Node2D';
 
@@ -9,16 +10,17 @@ import {
 
 
 export class MainScene extends Node {
-	private static SUBNODES: typeof Node[] = [
-		Node2D
-	];
+	// private static SUBNODES: typeof Node[] = [
+	// 	Node2D
+	// ];
 
 
 	constructor(name?: string) {
 		super(name);
 
-		// this.addChild(new Node2D(), 'Node2D');
-		// this.getChild('Node2D');
+		this.addChild(new Node2D(), 'Node2D');
+		let node = this.getNode('Node2D');
+		if(node) this.removeChild(node);
 
 		// const systemInfoDrawObject = G.systemInfoDrawObject = {
 		// 	textFPS: '',

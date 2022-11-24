@@ -91,10 +91,5 @@ export class Node2D extends CanvasItem {
 	public render(ctx: CanvasRenderingContext2D): void {
 		this._draw(ctx, this.globalPosition, this.globalScale, this.globalRotation);
 		super.render(ctx);
-
-		let a: String = this.getPath();
-		let b: NodePath = new NodePath('i');
-
-		b = a;
 	}
 }
