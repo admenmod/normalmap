@@ -5,7 +5,6 @@
 	"module": "ESNext",
 	"experimentalDecorators": true,
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
 	"strictFunctionTypes": true,
     "resolveJsonModule": true,
@@ -18,10 +17,12 @@
 	"noImplicitAny": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "lib": ["ESNext", "DOM"],
 	"baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src/"],
+  "exclude": ["node_modules"]
 }
