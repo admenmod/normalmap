@@ -1,8 +1,42 @@
-import { Node } from "./Node";
+import { Node, LayersList } from "@/core/nodes/Node";
+import { vec2, Vector2 } from '@/core/Vector2';
+import { CanvasLayer } from '@/core/CanvasLayer';
+// import { GridMap } from '@/core/GridMap';
+// import { MotionByTouch } from '@/core/MotionByTouch';
 
 
 export class Viewport extends Node {
-	constructor() {
+	public readonly canvas: CanvasLayer;
+	public readonly layers: LayersList = {};
+	public readonly size: Vector2;
+
+
+	constructor(canvasElement: CanvasLayer) {
 		super();
+
+		this.canvas = canvasElement;
+
+		for(let id in this.canvas.layers) {	
+			this.layers[id] = this.canvas.layers[id].getContext('2d')!;
+		};
+
+		this.size = new Vector2(this.canvas.size);
+		
+		this.canvas['@resize'].on(size => this.size.set(size));
+
+		// this.globalGridMap.size.set(screenSize);
+
+
+		// export const motionByTouch = new MotionByTouch();
+		// export const globalGridMap = new GridMap({ size: screenSize, coordinates: true });
+
+
+
+		// canvas.addEventListener('dblclick', () => canvas.requestFullscreen());
+	}
+
+
+	public render(): void {
+		super.render(this.layers);
 	}
 }

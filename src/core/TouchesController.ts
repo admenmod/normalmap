@@ -1,4 +1,4 @@
-import { Vector2 } from '../core/Vector2';
+import { Vector2 } from '@/core/Vector2';
 
 
 export class TouchesController {
@@ -83,7 +83,7 @@ export class TouchesController {
 	isMove() { return this.touches.some(i => i.isMove()); }
 	isTimeDown(time: number) { return this.touches.some(i => i.isTimeDown(time)); }
 
-	findTouch(cb = (touch: Touch) => true) { return this.touches.find(t => t.isPress() && cb(t)); }
+	findTouch(cb = (touch: Touch) => true) { return this.touches.find(t => t.isPress() && cb(t)) || null; }
 	isStaticRectIntersect(a: Parameters<typeof Touch.prototype.isStaticRectIntersect>[0]) {
 		return this.touches.some(i => i.isStaticRectIntersect(a));
 	}

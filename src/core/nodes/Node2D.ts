@@ -1,5 +1,5 @@
-import { Vector2 } from "../../core/Vector2";
-import { Node } from "../../core/nodes/Node";
+import { Vector2 } from "@/core/Vector2";
+import { LayersList, Node } from "@/core/nodes/Node";
 
 
 export class Node2D extends Node {
@@ -94,8 +94,8 @@ export class Node2D extends Node {
 	) {}
 
 
-	public render(ctx: CanvasRenderingContext2D): void {
-		this._draw(ctx, this.globalPosition, this.globalScale, this.globalRotation);
-		super.render(ctx);
+	public render(layers: LayersList): void {
+		this._draw(layers.main, this.globalPosition, this.globalScale, this.globalRotation);
+		super.render(layers);
 	}
 }

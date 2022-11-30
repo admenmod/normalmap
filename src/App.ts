@@ -1,28 +1,35 @@
+import { TouchesController } from './core/TouchesController';
+import { CanvasLayer } from './core/CanvasLayer';
 import { MainLoop } from './core/MainLoop';
-import { MainScene } from './scenes/MainScene';
-import G, { layers, touches } from './modules/global_ns';
 import { Viewport } from './core/nodes/Viewport';
+import { MainScene } from './scenes/MainScene';
 
 
 export class App {
+	public static app = document.querySelector<HTMLDivElement>('#app');
+
+
 	public static init(): void {
+		if(!this.app) throw new Error('huy poymi chto sluchilos');
+
+		const canvasLayer = new CanvasLayer();
+		
+
+		const touches = new TouchesController(canvasLayer);
 		const mainLoop = new MainLoop();
-
-		const viewport = new Viewport();
-		const mainScene = viewport.addChild(new MainScene());
-
-		G.viewport = viewport;
+		const viewport = new Viewport(canvasLayer);
+		viewport.addChild(new MainScene());
 
 		mainLoop.on('update', dt => {
-			viewport.render(layers.main.ctx);
+			viewport.render();
 			viewport.process(dt);
 			touches.nullify();
 		});
 
 		mainLoop.start();
 
-		mainScene.ready().then(() => {
-			mainScene.init();
+		viewport.ready().then(() => {
+			viewport.init();
 		});
 	}
 }

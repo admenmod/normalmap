@@ -1,3 +1,5 @@
+export const VectorN = 'Error';
+/*
 export class VectorN extends Array {
 	constructor(...args) {
 		super();
@@ -74,3 +76,4 @@ setToStringTeg(VectorN, 'VectorN');
 export const vecN = (...args) => new VectorN(...args);
 setHiddenProperty(VectorN.prototype, 'plus', VectorN.prototype.add);
 setHiddenProperty(VectorN.prototype, 'minus', VectorN.prototype.sub);
+*/

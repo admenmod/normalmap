@@ -1,4 +1,4 @@
-import { Vector2, vec2 } from '../core/Vector2';
+import { Vector2, vec2 } from '@/core/Vector2';
 
 
 export class GridMap {

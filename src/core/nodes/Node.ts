@@ -1,6 +1,9 @@
-import { Event, EventEmitter } from "../../core/Event";
-import { NodePath } from "../../core/NodePath";
-import { getInstanceOf, isInstanceOf } from '../../core/types';
+import { Event, EventEmitter } from "@/core/Event";
+import { NodePath } from "@/core/NodePath";
+import { getInstanceOf, isInstanceOf } from '@/core/types';
+
+
+export type LayersList = { [id: string]: CanvasRenderingContext2D };
 
 
 export class Node extends EventEmitter {
@@ -9,7 +12,7 @@ export class Node extends EventEmitter {
 	public '@ready' = new Event<Node, []>(this);
 
 	public '@process' = new Event<Node, [number]>(this);
-	public '@render' = new Event<Node, [CanvasRenderingContext2D]>(this);
+	public '@render' = new Event<Node, [LayersList]>(this);
 
 	public '@enter_tree' = new Event<Node, [Node, string]>(this);
 	public '@exit_tree' = new Event<Node, [Node, string]>(this);
@@ -56,9 +59,9 @@ export class Node extends EventEmitter {
 	protected _init(): void {}
 	protected _exit(): void {}
 
-	protected async _ready(): Promise<void> {};
-	protected _process(dt: number): void {};
-	protected _render(ctx: CanvasRenderingContext2D): void {}
+	protected async _ready(): Promise<void> {}
+	protected _process(dt: number): void {}
+	protected _render(layers: LayersList): void {}
 
 
 	public init(): void {
@@ -89,8 +92,8 @@ export class Node extends EventEmitter {
 		if(this._isReady) return;
 
 		await this._ready();
-		const proms: Promise<void>[] = [];
 
+		const proms: Promise<void>[] = [];
 		const l = this.getCountChildren();
 		for(let i = 0; i < l; i++) proms.push(this.getChild(i).ready());
 		
@@ -113,13 +116,13 @@ export class Node extends EventEmitter {
 		(this as Node).emit('process', dt);
 	}
 
-	public render(ctx: CanvasRenderingContext2D): void {
-		this._render(ctx);
+	public render(layers: LayersList): void {
+		this._render(layers);
 
 		const l = this.getCountChildren();
-		for(let i = 0; i < l; i++) this.getChild(i).render(ctx);
+		for(let i = 0; i < l; i++) this.getChild(i).render(layers);
 
-		(this as Node).emit('render', ctx);
+		(this as Node).emit('render', layers);
 	}
 
 

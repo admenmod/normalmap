@@ -1,4 +1,4 @@
-import { Event, EventEmitter } from '../core/Event';
+import { Event, EventEmitter } from '@/core/Event';
 
 
 export class MainLoop extends EventEmitter {

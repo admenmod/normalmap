@@ -1,5 +1,5 @@
-import { TouchesController, Touch } from '../ver/touches-controller/touches-controller';
-import { Vector2, vec2 } from '../core/Vector2';
+import { TouchesController, Touch } from '@/core/TouchesController';
+import { Vector2, vec2 } from '@/core/Vector2';
 
 
 export class MotionByTouch {

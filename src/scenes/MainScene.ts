@@ -1,11 +1,13 @@
-import { Vector2 } from '../ver/ver/ver';
-import { Node } from '../core/nodes/Node';
-import { Block } from '../modules/Block';
+import { Vector2 } from '@/core/Vector2';
+import { LayersList, Node } from '@/core/nodes/Node';
+import { Block } from '@/scenes/nodes/Block';
+// import '@/scenes/t';
+import '@/modules/main';
 
-import {
-	touches, layers, screenSize,
-	globalGridMap, motionByTouch
-} from '../modules/global_ns';
+// import {
+// 	touches, layers, screenSize,
+// 	globalGridMap, motionByTouch
+// } from '../modules/global_ns';
 
 
 export class MainScene extends Node {
@@ -71,23 +73,23 @@ export class MainScene extends Node {
 
 	//========== Init ==========//
 	protected _init(): void {
-		console.log(`Scene: ${this.name}\nScreen size: ${screenSize.x}, ${screenSize.y}`);
+		// console.log(`Scene: ${this.name}\nScreen size: ${screenSize.x}, ${screenSize.y}`);
 	}
 
 
 	//========== Update ==========//
 	protected _process(dt: number): void {
-		motionByTouch.update(dt, touches, layers.main.camera);
+		// motionByTouch.update(dt, touches, layers.main.camera);
 
 		// systemInfoDrawObject.update(dt);
 		// systemInfoDrawObject.draw(layers.main.ctx);
 	}
 
-	protected _render(ctx: CanvasRenderingContext2D) {
+	protected _render(layers: LayersList) {
 		// layers.main.ctx.clearRect(0, 0, screenSize.x, screenSize.y);
 
 		// globalGridMap.draw(layers.main.ctx, layers.main.camera);
-		this.getNode('Block')!.render(ctx);
+		this.getNode('Block')!.render(layers);
 	}
 
 	//========== Exit ==========//

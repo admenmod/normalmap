@@ -1,5 +1,5 @@
-import { Event, EventEmitter } from "../Event";
-import { Vector2 } from "../Vector2";
+import { Event, EventEmitter } from "@/core/Event";
+import { Vector2 } from "@/core/Vector2";
 
 
 export class Image extends EventEmitter {

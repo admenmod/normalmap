@@ -1,9 +1,9 @@
-import { EventEmitter, Event } from "./Event";
-import { Vector2 } from "./Vector2";
+import { EventEmitter, Event } from "@/core/Event";
+import { Vector2 } from "@/core/Vector2";
 
 
 export class CanvasLayer extends HTMLElement {
-	public '@resize' = new Event<CanvasLayer, []>(this);
+	public '@resize' = new Event<CanvasLayer, [Vector2]>(this);
 
 	private _pixelScale: number;
 	private _width!: number;
@@ -57,7 +57,7 @@ justify-self :${this.getAttribute('justify-slot')||'center'};
 		this._sizeUpdate();
 		window.addEventListener('resize', () => {
 			this._sizeUpdate();
-			this["@resize"].emit();
+			this["@resize"].emit(this.size);
 		});
 	}
 
@@ -146,3 +146,6 @@ justify-self :${this.getAttribute('justify-slot')||'center'};
 		else if(['justifyItems', 'alignItems'].includes(name)) (this.slotWrapper.style as any)[name] = newValue;
 	}
 };
+
+
+customElements.define('canvas-layer', CanvasLayer);

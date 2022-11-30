@@ -1,5 +1,5 @@
 export function codeShell(
-	code: string | ((...args: any) => any) = '',
+	code: string,
 	env: object = Object.create(null),
 	p: {
 		insulate?: boolean;
@@ -13,6 +13,8 @@ export function codeShell(
 		});
 	};
 
-	if(typeof code !== 'string') code = code.toString().replace(/^function.+?\{(.*)\}$/s, '$1');
 	return function() { eval(`with(env) {${code}}; //# sourceURL=${p.source || 'code'}`); };
 };
+
+
+codeShell.from = (code: (...args: any[]) => any) => code.toString().replace(/^function.+?\{(.*)\}$/s, '$1');
