@@ -3,8 +3,8 @@ import { Vector2 } from '../Vector2';
 
 
 export class CanvasItem extends Node {
-	constructor(name?: string) {
-		super(name);
+	constructor() {
+		super();
 	}
 
 

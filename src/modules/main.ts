@@ -3,7 +3,14 @@ import { BaseCore } from "@/modules/BaseCore";
 
 
 const main_file = `
-console.log('slla');
+let mineralmap = Game.scan();
+
+let minerals = mineralmap.search(Mineral.ONE);
+let target = minerals[0].position;
+
+console.log(mineralmap);
+console.log(minerals);
+console.log(target);
 `;
 
 

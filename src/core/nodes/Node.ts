@@ -35,9 +35,8 @@ export class Node extends EventEmitter {
 	private _isReady: boolean = false;
 
 
-	constructor(name?: string) {
+	constructor() {
 		super();
-		if(name) this.name = name;
 	}
 
 	public set name(v) { this._name = v; }
@@ -117,6 +116,8 @@ export class Node extends EventEmitter {
 	}
 
 	public render(layers: LayersList): void {
+		if(!this._isInited || !this._isReady) return;
+
 		this._render(layers);
 
 		const l = this.getCountChildren();
@@ -131,7 +132,7 @@ export class Node extends EventEmitter {
 
 
 	public getParent(): Node | null { return this._parent_node; }
-	public getChainParents<T extends typeof Node = typeof Node>(Class: T): getInstanceOf<T>[] {
+	public getChainParents<T extends new(...args: any[]) => Node = typeof Node>(Class: T): getInstanceOf<T>[] {
 		let arr: getInstanceOf<T>[] = [];
 		let p: Node | null = this;
 
@@ -141,6 +142,9 @@ export class Node extends EventEmitter {
 
 		return arr;
 	}
+	// public getRoot<T extends Node = Node>(): T {
+	// 	return this.getNode('/root') as T;
+	// }
 
 
 	public hasChild(name: string): boolean {
@@ -164,7 +168,16 @@ export class Node extends EventEmitter {
 		return this._child_nodes[index] as T;
 	}
 
+	// TODO: make
 	public getNode<T extends Node>(path: string): T | null {
+		if(path[0] === '/') {
+			const arr = this.getChainParents(Node);
+			// console.log('ss', this.name, arr);
+
+			return arr[arr.length-1] as T;
+		}
+
+
 		const nodepath = NodePath.from(path);
 
 		for(let i = 0; i < this._child_nodes.length; i++) {

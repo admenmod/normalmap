@@ -5,8 +5,8 @@ const isVector2_t = (v: any): v is Vector2_t => v[0] !== null && v[0] !== undefi
 
 
 export class Vector2 {
-	public 0: number;
-	public 1: number;
+	public '0': number = 0;
+	public '1': number = 0;
 	public readonly length: number = 2;
 
 
@@ -14,7 +14,11 @@ export class Vector2 {
 	constructor(v: Vector2_t);
 	constructor(x: number, y: number);
 	constructor(...args: any[]) {
-		for(let i = 0; i < this.length; ++i) (this as any)[i] = args[i] || 0;
+		if(args.length === 1) {
+			if(typeof args[0] === 'object') { for(let i = 0; i < this.length; ++i) (this as any)[i] = args[0][i]; }
+			else { for(let i = 0; i < this.length; ++i) (this as any)[i] = args[0]; }
+		} else { for(let i = 0; i < this.length; ++i) (this as any)[i] = args[i] || 0; }
+		return this;
 	}
 
 	public set x(v: number) { this[0] = v; }
@@ -201,6 +205,7 @@ export class Vector2 {
 }
 
 export const vec2: {
+	(): Vector2;
 	(v: Vector2_t): Vector2;
-	(x?: number, y?: number): Vector2;
+	(x: number, y: number): Vector2;
 } = (...args: any[]): Vector2 => new Vector2(args);

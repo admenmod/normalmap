@@ -16,7 +16,7 @@ export class Node2D extends Node {
 
 	public zAsRelative: boolean = true;
 
-	constructor(name?: string) { super(name); }
+	constructor() { super(); }
 
 	public get globalPosition(): Vector2 { return this._getRelativePosition(Node.MAX_NESTING); }
 	public get globalScale(): Vector2 { return this._getRelativeScale(Node.MAX_NESTING); }

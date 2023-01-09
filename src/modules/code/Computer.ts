@@ -1,4 +1,59 @@
 import { EventEmitter } from "@/core/Event";
+import { Vector2, Vector2_t } from "@/core/Vector2";
+
+
+const Mineral = {
+	SPACE: 0,
+	ONE: 1,
+	TWO: 2
+} as const;
+
+type Mineral = typeof Mineral[keyof typeof Mineral];
+
+
+class MineralObject {
+	constructor(
+		public position: Vector2
+	) {}
+}
+
+
+class MineralMap {
+	constructor(
+		public data: Mineral[][]
+	) {}
+
+	public search(mineral: Mineral): MineralObject[] {
+		const arr: MineralObject[] = [];
+
+		for(let y = 0; y < this.data.length; y++) {
+			for(let x = 0; x < this.data[y].length; x++) {
+				if(this.data[y][x] === mineral) {
+					arr.push(new MineralObject(new Vector2(x, y)));
+				}
+			}
+		}
+
+		return arr;
+	}
+}
+
+
+class GameAPI extends EventEmitter {
+	constructor() {
+		super();
+	}
+
+	scan(): MineralMap {
+		return new MineralMap([
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0]
+		]);
+	}
+}
 
 
 class File {
@@ -12,6 +67,16 @@ class File {
 }
 
 
+const env = {
+	console, Math,
+
+	Game: new GameAPI(),
+	Mineral: {
+		ONE: 1
+	}
+};
+
+
 export class Computer extends EventEmitter {
 	public files: { [K: string]: File } = {};
 
@@ -23,6 +88,6 @@ export class Computer extends EventEmitter {
 
 	public run() {
 		const code = this.files['main'].read();
-		codeShell(code, { console }, 'main').call({});
+		codeShell(code, env, 'main').call({});
 	}
 }

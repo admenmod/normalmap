@@ -14,6 +14,10 @@ export class CanvasLayer extends HTMLElement {
 	public slotWrapper: HTMLDivElement;
 	public layersWrapper: HTMLDivElement;
 
+	public connectedCallback() {
+		this.sizeUpdate();
+	}
+
 	constructor(p: {
 		layers?: string;
 		pixelScale?: number;
@@ -54,16 +58,16 @@ justify-self :${this.getAttribute('justify-slot')||'center'};
 		for(let id of paramlayers) { this.createLayer(id); };
 
 
-		this._sizeUpdate();
+		this.sizeUpdate();
 		window.addEventListener('resize', () => {
-			this._sizeUpdate();
+			this.sizeUpdate();
 			this["@resize"].emit(this.size);
 		});
 	}
 
 	public set pixelScale(v) {
 		this._pixelScale = v;
-		this._sizeUpdate();
+		this.sizeUpdate();
 	}
 	public get pixelScale() { return this._pixelScale; }
 
@@ -87,7 +91,7 @@ justify-self :${this.getAttribute('justify-slot')||'center'};
 	public get vmin() { return Math.min(this._width, this._height) / 100; }
 	public get size() { return new Vector2(this._width, this._height); }
 
-	protected _sizeUpdate() {
+	public sizeUpdate() {
 		let b = this.getBoundingClientRect();
 		this._width = b.width*this._pixelScale;
 		this._height = b.height*this._pixelScale;

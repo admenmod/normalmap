@@ -10,8 +10,8 @@ export class Sprite2D extends Node2D {
 
 	public size = new Vector2(100, 100);
 
-	constructor(name?: string) {
-		super(name);
+	constructor() {
+		super();
 	}
 
 	public async load(src: string): Promise<Image> {

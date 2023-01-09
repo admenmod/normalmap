@@ -28,14 +28,19 @@ export class GridMap {
 		this.lineWidth = p.lineWidth || 0.2;
 		this.lineColor = p.lineColor || '#ffffff';
 
-		this.coordinates = p.coordinates||false;
+		this.coordinates = p.coordinates || false;
 	}
 
 	draw(ctx: CanvasRenderingContext2D, pos = Vector2.ZERO) {
 		let mar = pos.buf().mod(this.tile);
 		let counts = this.size.buf().add(mar).div(this.tile); 
 
+		// ctx.save();
+		// ctx.fillStyle = `rgb(${Math.random()*255}, 100, 100)`;
+		// ctx.fillRect(Math.random() * 100, 0, 100, 100);
+		// ctx.restore();
 		ctx.save();
+
 
 		// clip area
 		ctx.beginPath();

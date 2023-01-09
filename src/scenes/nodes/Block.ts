@@ -1,13 +1,13 @@
+import { Vector2 } from "@/core/Vector2";
 import { Node2D } from "@/core/nodes/Node2D";
 import { Sprite2D } from "@/core/nodes/Sprite2D";
-import { Vector2 } from "@/core/Vector2";
 
 
 export class Block extends Node2D {
 	public readonly size = new Vector2(10, 10);
 
-	constructor(name?: string) {
-		super(name);
+	constructor() {
+		super();
 
 		// this.addChild(new Sprite2D(), 'Sprite2D');
 	}
