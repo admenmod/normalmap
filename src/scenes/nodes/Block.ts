@@ -18,13 +18,8 @@ export class Block extends Node2D {
 		// ]);
 	}
 
-	protected _draw(
-		ctx: CanvasRenderingContext2D,
-		pos: Vector2 = this.globalPosition,
-		scale: Vector2 = this.globalScale,
-		rot: number = this.globalRotation
-	) {
-		super._draw(ctx);
+	protected _draw(ctx: CanvasRenderingContext2D, pos: Vector2, scale: Vector2, rot: number) {
+		super._draw(ctx, pos, scale, rot);
 
 		const size = this.size.buf().inc(scale);
 

@@ -1,5 +1,6 @@
 import { Vector2 } from "@/core/Vector2";
 import { LayersList, Node } from "@/core/nodes/Node";
+import { Camera } from "@/core/Camera";
 
 
 export class Node2D extends Node {
@@ -88,14 +89,19 @@ export class Node2D extends Node {
 
 	protected _draw(
 		ctx: CanvasRenderingContext2D,
-		pos: Vector2 = this.globalPosition,
-		scale: Vector2 = this.globalScale,
-		rot: number = this.globalRotation
+		pos: Vector2 = this.position,
+		scale: Vector2 = this.scale,
+		rot: number = this.rotation
 	) {}
 
 
-	public render(layers: LayersList): void {
-		this._draw(layers.main, this.globalPosition, this.globalScale, this.globalRotation);
-		super.render(layers);
+	public render(layers: LayersList, camera: Camera): void {
+		this._draw(layers.main,
+			this.globalPosition.sub(camera.position.buf()).inc(camera.scale),
+			this.globalScale.inc(camera.scale),
+			this.globalRotation - camera.rotation
+		);
+
+		super.render(layers, camera);
 	}
 }

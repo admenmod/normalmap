@@ -1,6 +1,7 @@
-import { TouchesController } from "@/core/TouchesController";
-import { CanvasLayer } from "@/core/CanvasLayer";
+import { TouchesController } from '@/core/TouchesController';
+import { CanvasLayer } from '@/core/CanvasLayer';
 import { App } from '@/App';
+import { SensorCamera } from '@/scenes/nodes/SensorCamera';
 
 
 export type LayersList = { [id: string]: CanvasRenderingContext2D };
@@ -21,7 +22,12 @@ for(let id in canvas.layers) {
 };
 
 export const screenSize = canvas.size;
-canvas['@resize'].on(size => screenSize.set(size));
+export const camera = new SensorCamera(screenSize);
+
+canvas['@resize'].on(size => {
+	screenSize.set(size);
+	camera.size.set(size);
+});
 
 //@ts-ignore
 canvas.ondblclick = () => canvas.webkitRequestFullscreen();

@@ -1,6 +1,7 @@
 import { Event, EventEmitter } from "@/core/Event";
 import { NodePath } from "@/core/NodePath";
 import { getInstanceOf, isInstanceOf } from '@/core/types';
+import { Camera } from "@/core/Camera";
 
 
 export type LayersList = { [id: string]: CanvasRenderingContext2D };
@@ -12,7 +13,7 @@ export class Node extends EventEmitter {
 	public '@ready' = new Event<Node, []>(this);
 
 	public '@process' = new Event<Node, [number]>(this);
-	public '@render' = new Event<Node, [LayersList]>(this);
+	public '@render' = new Event<Node, [LayersList, Camera]>(this);
 
 	public '@enter_tree' = new Event<Node, [Node, string]>(this);
 	public '@exit_tree' = new Event<Node, [Node, string]>(this);
@@ -60,7 +61,7 @@ export class Node extends EventEmitter {
 
 	protected async _ready(): Promise<void> {}
 	protected _process(dt: number): void {}
-	protected _render(layers: LayersList): void {}
+	protected _render(layers: LayersList, camera: Camera): void {}
 
 
 	public init(): void {
@@ -115,15 +116,15 @@ export class Node extends EventEmitter {
 		(this as Node).emit('process', dt);
 	}
 
-	public render(layers: LayersList): void {
+	public render(layers: LayersList, camera: Camera): void {
 		if(!this._isInited || !this._isReady) return;
 
-		this._render(layers);
+		this._render(layers, camera);
 
 		const l = this.getCountChildren();
-		for(let i = 0; i < l; i++) this.getChild(i).render(layers);
+		for(let i = 0; i < l; i++) this.getChild(i).render(layers, camera);
 
-		(this as Node).emit('render', layers);
+		(this as Node).emit('render', layers, camera);
 	}
 
 

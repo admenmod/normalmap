@@ -1,8 +1,7 @@
-import { MainLoop } from './core/MainLoop';
-import { Viewport } from './core/nodes/Viewport';
-import { MainScene } from './scenes/MainScene';
+import { MainLoop } from '@/core/MainLoop';
+import { MainScene } from '@/scenes/MainScene';
 
-import { touches, canvas, layers } from './global';
+import { touches, canvas, layers, camera } from '@/global';
 
 
 export class App {
@@ -13,7 +12,7 @@ export class App {
 
 		mainLoop.on('update', dt => {
 			main_scene.process(dt);
-			main_scene.render(layers);
+			main_scene.render(layers, camera);
 			touches.nullify();
 		});
 

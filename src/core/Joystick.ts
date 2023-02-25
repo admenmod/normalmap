@@ -36,6 +36,10 @@ export class Joystick {
 		this.touch = null;
 	}
 
+	syncPos() {
+		this.core.pos.set(this.pos);
+	}
+
 	public get value(): number {
 		return Math.round(this.pos.getDistance(this.core.pos) / (this.radius-this.core.radius) * 10000) / 10000;
 	}
